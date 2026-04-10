@@ -9,19 +9,21 @@ pipeline {
 		stage('checkout'){
 		steps {
 
-		git branch: 'main', url:
-		'https://github.com/nirajkhatavkar100-nk/jenkins_docker_python_hello.git '
+		git branch: 'main',
+ 
+
+`          url:	'https://github.com/nirajkhatavkar100-nk/jenkins_docker_python_hello.git'
 		}
 	}
 
 	stage('Docker Build') {
 	steps {
 		script {
-			if(fileExists('Dockefile')) {
-			 sh "docker build -t
-			${env.DOCKER_IMAGE} ."
+			if (fileExists('Dockefile')) {
+			 	
+			sh "docker build -t ${env.DOCKER_IMAGE} ."
 		
-			}else{
+		} else {
 	error "Dockerfile not found in the worksapce. Please create one for your python application."
 
 	}
