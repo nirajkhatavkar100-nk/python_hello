@@ -2,14 +2,19 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'hello-world-python:latest'
+        DOCKER_IMAGE = "hello-world-python:${env.BUILD_NUMBER}"
     }
 
     stages {
-        stage('checkout') {
+        stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/nirajkhatavkar100-nk/jenkins_docker_python_hello.git'
+                git url: 'https://github.com/nirajkhatavkar100-nk/jenkins_docker_python_hello.git'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'python3 --version'
             }
         }
 
@@ -19,26 +24,31 @@ pipeline {
                     if (fileExists('Dockerfile')) {
                         sh "docker build -t ${env.DOCKER_IMAGE} ."
                     } else {
-                        error "Dockerfile not found in the workspace. Please create one for your python application."
+                        error "Dockerfile not found!"
                     }
                 }
             }
         }
 
-        stage('Docker Run (optional)') {
+        stage('Docker Run') {
             steps {
                 sh "docker run --rm ${env.DOCKER_IMAGE}"
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                sh "docker system prune -f"
             }
         }
     }
 
     post {
         success {
-            echo 'Success'
+            echo 'Build succeeded 🚀'
         }
-
         failure {
-            echo 'Failure'
+            echo 'Build failed ❌'
         }
     }
 }
